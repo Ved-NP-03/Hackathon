@@ -1,5 +1,16 @@
 const mongoose = require("mongoose");
-const dbURL = mongoose.connect("mongodb://localhost:27017/login-tut");
+require('dotenv').config();
+
+const dbURL = process.env.DB_URL;
+
+if (!dbURL) {
+  console.error("Database URL not found. Please check your .env file.");
+  process.exit(1);
+}
+
+mongoose.connect(dbURL)
+  .then(() => console.log("✅ Database Connected Successfully"))
+  .catch((err) => console.error("❗ Database connection failed:", err.message));
 
 const connect = mongoose.connect(dbURL);
 
