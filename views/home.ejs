@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scholar AI</title>
+  
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #88bdf2;
+    }
+
+    /* Navigation Bar Styles */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #6a89a7;
+      color: white;
+      padding: 15px 30px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar .logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
+    }
+
+    /* Add margin below the navbar */
+    .navbar-spacing {
+      margin-bottom: 30px;
+    }
+
+    /* Flex Container Styles */
+    .flex-container {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr); /* 5 columns */
+      grid-template-rows: repeat(2, 300px); /* 2 rows, increased height */
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .flex-item {
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      overflow: hidden;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .flex-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .flex-item:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+    }
+
+    /* Footer Styles */
+    .footer {
+      display: flex;
+      
+      flex-wrap: wrap;
+      background-color: #6a89a7;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .footer a {
+      margin: 10px;
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
+    }
+
+    .footer a img {
+      width: 30px;
+      height: 30px;
+      margin-right: 5px;
+    }
+
+    .thank-you {
+      text-align: center;
+      margin: 20px;
+      font-size: 20px;
+      color: #333;
+      text-transform: capitalize;
+    }
+    btn-ai{
+         justify-content: center;
+    }
+    @media screen and (max-width: 600px) {
+      .navbar {
+        flex-direction: column;
+        text-align: center;
+      }
+      .navbar h1 {
+        font-size: 20px;
+      }
+      .navbar a {
+        margin-top: 10px;
+      }
+
+      .flex-item img {
+        height: 200px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <div class="navbar">
+    <div class="logo">
+        <img src="logo2.jpg" alt="our logo" height="80px">
+    </div>
+    <h1 style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">CHOOSE THE RIGHT PATH</h1>
+    <a href=" mailto:prathampa0667@gmail.com">Contact Us</a>
+  </div>
+  <div class="navbar-spacing"></div>
+   <div>
+    <p class="thank-you"> here are some options you could choose from</p>
+   </div>
+  <!-- Flex Container -->
+  <div class="flex-container">
+    <!-- Flex Items -->
+     <link rel="stylesheet" href="/chatbot">
+    <div class="flex-item">
+      <a href="/engineer" target="_blank">
+        <img src="engi.avif" alt="Engineering">
+        <div>Engineering</div>
+      </a>
+    </div>
+    <div class="flex-item">
+      <a href="/architech" target="_blank">
+        <img src="arti.avif" alt="Architecture">
+        <div>Architecture</div>
+      </a>
+    </div>
+    <div class="flex-item">
+      <a href="/medicin" target="_blank">
+        <img src="medi.avif" alt="Medical">
+        <div>Medical</div>
+      </a>
+    </div>
+    <div class="flex-item">
+      <a href="/lawservice" target="_blank">
+        <img src="law.avif" alt="Law">
+        <div>Law</div>
+      </a>
+    </div>
+    <div class="flex-item">
+      <a href="/hotelmang" target="_blank">
+        <img src="hoti.avif" alt="Hotel Management">
+        <div>Hotel Management</div>
+      </a>
+    </div>
+    <div class="flex-item">
+      <a href="/marketing" target="_blank">
+        <img src="marketing.avif" alt="marketing">
+        <div>marketing</div>
+      </a>
+    </div>
+    <div class="flex-item">
+      <a href="/army" target="_blank">
+        <img src="armed.jpg" alt="armed forces">
+        <div>armed forces</div>
+      </a>
+    </div>
+    <div class="flex-item">
+      <a href="/photo" target="_blank">
+        <img src="photography.jpg" alt="photography">
+        <div>photography</div>
+      </a>
+    </div>
+    <div class="flex-item">
+      <a href="/nutrion" target="_blank">
+        <img src="nutrition.jpg" alt="nutrionist">
+        <div>nutrionist</div>
+      </a>
+    </div>
+    <div class="flex-item">
+      <a href="/journalist" target="_blank">
+        <img src="journalist.avif" alt="journalist">
+        <div>Technology</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Footer Section -->
+  <div class="footer">
+    <a href="https://www.instagram.com/pra_thampai?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank">
+      <img src="insta.jpg" alt="Instagram">
+      <p>pratham</p>
+    </a>
+    
+    
+  </div>
+
+  <!-- Thank You Message -->
+  <div class="thank-you">
+    Thank you for visiting our page!
+   
+  </div>
+</body>
+</html>
