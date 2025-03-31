@@ -10,7 +10,7 @@ const { name } = require('ejs');
 const app = express();
 
 require('dotenv').config();
-const dbURL = process.env.DB_URL;
+const dbURL = process.env.DB_URI;
 
 
 //convert data into json form

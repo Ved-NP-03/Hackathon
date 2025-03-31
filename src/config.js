@@ -1,18 +1,18 @@
 const mongoose = require("mongoose");
 require('dotenv').config();
 
-const dbURL = process.env.DB_URL;
+const DB_URI = process.env.DB_URI;
 
-if (!dbURL) {
+if (!DB_URI) {
   console.error("Database URL not found. Please check your .env file.");
   process.exit(1);
 }
 
-mongoose.connect(dbURL)
+mongoose.connect(DB_URI)
   .then(() => console.log("✅ Database Connected Successfully"))
   .catch((err) => console.error("❗ Database connection failed:", err.message));
 
-const connect = mongoose.connect(dbURL);
+const connect = mongoose.connect(DB_URI);
 
 //checking
 connect.then(() => {
