@@ -8,9 +8,9 @@ if (!MONGODB_URI) {
   process.exit(1);
 }
 
-mongoose.connect(MONGODB_URI)
-  .then(() => console.log("✅ Database Connected Successfully"))
-  .catch((err) => console.error("❗ Database connection failed:", err.message));
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('✅ Database connected'))
+  .catch(err => console.error('❗ Database connection failed:', err.message));
 
 const connect = mongoose.connect(MONGODB_URI);
 
