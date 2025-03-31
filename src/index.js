@@ -10,7 +10,7 @@ const { name } = require('ejs');
 const app = express();
 
 require('dotenv').config();
-const dbURL = process.env.DB_URI;
+const MONGODB_URI = process.env.MONGODB_URI;
 
 
 //convert data into json form
