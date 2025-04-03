@@ -1,21 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* 🔹 Body Styling */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 10px;
+            background: linear-gradient(135deg, #ff9966, #ff5e62);
+        }
+
+        /* 🔹 Login Container */
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 25px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
+        }
+        .login-container:hover {
+            transform: translateY(-5px);
+        }
+
+        /* 🔹 Form Inputs */
+        .form-control {
+            border-radius: 25px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            transition: all 0.3s ease-in-out;
+            font-size: 16px;
+        }
+        .form-control:focus {
+            border-color: #ff5e62;
+            box-shadow: 0 0 10px rgba(255, 94, 98, 0.4);
+        }
+
+        /* 🔹 Button Styling */
+        .btn-custom {
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 18px;
+            padding: 12px;
+            background: linear-gradient(135deg, #ff9966, #ff5e62);
+            border: none;
+            color: white;
+            transition: all 0.3s ease-in-out;
+            width: 100%;
+        }
+        .btn-custom:hover {
+            background: linear-gradient(135deg, #ff5e62, #ff9966);
+            transform: scale(1.05);
+        }
+
+        /* 🔹 Responsive Design */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 20px;
+                max-width: 90%;
+            }
+            .form-control {
+                font-size: 14px;
+                padding: 10px;
+            }
+            .btn-custom {
+                font-size: 16px;
+                padding: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
-        <div class="bg-white rounded p-5 shadow" style="width: 350px;">
-            <h2 class="text-center">Login</h2>
-            <form action="/login" method="post">
-                <input type="text" name="username" class="form-control mb-2" placeholder="Username" required>
-                <input type="password" name="password" class="form-control mb-2" placeholder="Password" required>
-                <button type="submit" class="btn btn-warning btn-block">Login</button>
-            </form>
-            <p class="text-center mt-3">Don't have an account? <a href="signup.html" id="toSignup">Sign Up</a></p>
-        </div>
+    <div class="login-container">
+        <h2 class="mb-3">Login</h2>
+        <form action="/login" method="post">
+            <input type="text" name="username" class="form-control mb-3" placeholder="Username" required>
+            <input type="password" name="password" class="form-control mb-3" placeholder="Password" required>
+            <button type="submit" class="btn btn-custom">Login</button>
+        </form>
+        <p class="mt-3">Don't have an account? <a href="signup.html" id="toSignup">Sign Up</a></p>
     </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script>
         document.getElementById('toSignup').addEventListener('click', function(event) {

@@ -1,21 +1,133 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Background Animation */
+        body {
+            background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #ffdde1, #ff758c);
+            background-size: 400% 400%;
+            animation: gradientBG 8s ease infinite;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Form Container */
+        .signup-container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 380px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Title */
+        .signup-container h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Floating Labels for Inputs */
+        .form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            transition: 0.3s;
+            font-size: 1rem;
+            outline: none;
+        }
+        .form-group label {
+            position: absolute;
+            top: 50%;
+            left: 12px;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            color: #aaa;
+            transition: 0.3s;
+            pointer-events: none;
+        }
+
+        /* Floating Effect */
+        .form-group input:focus + label,
+        .form-group input:not(:placeholder-shown) + label {
+            top: 8px;
+            font-size: 0.8rem;
+            color: #ff495e;
+        }
+
+        /* Sign-Up Button */
+        .btn-signup {
+            width: 100%;
+            padding: 12px;
+            border-radius: 50px;
+            background: #ff758c;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            transition: 0.3s;
+        }
+        .btn-signup:hover {
+            background: #ff495e;
+            transform: scale(1.05);
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Mobile-Friendly Design */
+        @media (max-width: 400px) {
+            .signup-container {
+                width: 90%;
+                padding: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
-        <div class="bg-white rounded p-5 shadow" style="width: 350px;">
-            <h2 class="text-center">Sign Up</h2>
-            <form action="/signup" method="post">
-                <input type="text" name="username" class="form-control mb-2" placeholder="Username" required>
-                <input type="password" name="password" class="form-control mb-2" placeholder="Password" required>
-                <input type="email" name="email" class="form-control mb-2" placeholder="Email" required>
-                <button type="submit" class="btn btn-warning btn-block">Sign Up</button>
-            </form>
-            <p class="text-center mt-3">Already have an account? <a href="login.html" id="toLogin">Login</a></p>
-        </div>
+
+    <div class="signup-container">
+        <h2>Sign Up</h2>
+        <form action="/signup" method="post">
+            <div class="form-group">
+                <input type="text" name="username" id="username" required placeholder=" ">
+                <label for="username">Username</label>
+            </div>
+            <div class="form-group">
+                <input type="email" name="email" id="email" required placeholder=" ">
+                <label for="email">Email</label>
+            </div>
+            <div class="form-group">
+                <input type="password" name="password" id="password" required placeholder=" ">
+                <label for="password">Password</label>
+            </div>
+            <button type="submit" class="btn btn-signup">Sign Up</button>
+        </form>
+        <p class="text-center mt-3">Already have an account? <a href="login.html" id="toLogin">Login</a></p>
     </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script>
         document.getElementById('toLogin').addEventListener('click', function(event) {
@@ -25,5 +137,6 @@
             }});
         });
     </script>
+
 </body>
 </html>
