@@ -6,9 +6,9 @@
     <title>Sign Up</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Background Animation */
+        /* Dark Animated Background */
         body {
-            background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #ffdde1, #ff758c);
+            background: linear-gradient(-45deg, #232526, #414345, #141E30, #0f0c29);
             background-size: 400% 400%;
             animation: gradientBG 8s ease infinite;
             height: 100vh;
@@ -16,6 +16,7 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
+            overflow: hidden;
         }
 
         @keyframes gradientBG {
@@ -24,77 +25,93 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Form Container */
+        /* Glassmorphism Form */
         .signup-container {
-            background: white;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
             padding: 2.5rem;
-            border-radius: 12px;
-            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            box-shadow: 0px 5px 20px rgba(255, 255, 255, 0.2);
             width: 100%;
             max-width: 380px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Title */
-        .signup-container h2 {
             text-align: center;
-            margin-bottom: 1.5rem;
-            font-weight: bold;
-            color: #333;
+            animation: fadeInUp 1s ease-out;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        /* Floating Labels for Inputs */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Form Styling */
         .form-group {
             position: relative;
             margin-bottom: 1.5rem;
         }
+
         .form-group input {
             width: 100%;
             padding: 12px;
-            border: 2px solid #ddd;
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 8px;
-            transition: 0.3s;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
             font-size: 1rem;
+            transition: all 0.3s;
             outline: none;
         }
+
+        /* Show Placeholder by Default */
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+            transition: 0.3s ease-in-out;
+        }
+
+        /* Floating Label */
         .form-group label {
             position: absolute;
             top: 50%;
             left: 12px;
             transform: translateY(-50%);
             font-size: 1rem;
-            color: #aaa;
-            transition: 0.3s;
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s;
             pointer-events: none;
         }
 
-        /* Floating Effect */
+        /* Move Label Up When Input is Focused */
+        .form-group input:focus::placeholder {
+            opacity: 0;
+        }
+
         .form-group input:focus + label,
         .form-group input:not(:placeholder-shown) + label {
             top: 8px;
             font-size: 0.8rem;
-            color: #ff495e;
+            color: #fff;
         }
 
-        /* Sign-Up Button */
+        /* Stylish Sign-Up Button */
         .btn-signup {
             width: 100%;
             padding: 12px;
             border-radius: 50px;
-            background: #ff758c;
+            background: linear-gradient(135deg, #ff758c, #ff495e);
             color: white;
             font-weight: bold;
             font-size: 1rem;
             border: none;
             cursor: pointer;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-            transition: 0.3s;
+            transition: all 0.3s ease-in-out;
+            position: relative;
+            overflow: hidden;
         }
+
         .btn-signup:hover {
-            background: #ff495e;
             transform: scale(1.05);
-            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(255, 94, 98, 0.4);
         }
 
         /* Mobile-Friendly Design */
@@ -108,33 +125,41 @@
 </head>
 <body>
 
+    <!-- Sign-Up Form -->
     <div class="signup-container">
-        <h2>Sign Up</h2>
+        <h2 class="text-white">Sign Up</h2>
         <form action="/signup" method="post">
             <div class="form-group">
-                <input type="text" name="username" id="username" required placeholder=" ">
+                <input type="text" name="username" id="username" required placeholder="Username">
                 <label for="username">Username</label>
             </div>
             <div class="form-group">
-                <input type="email" name="email" id="email" required placeholder=" ">
-                <label for="email">Email</label>
-            </div>
-            <div class="form-group">
-                <input type="password" name="password" id="password" required placeholder=" ">
+                <input type="password" name="password" id="password" required placeholder="Password">
                 <label for="password">Password</label>
             </div>
             <button type="submit" class="btn btn-signup">Sign Up</button>
         </form>
-        <p class="text-center mt-3">Already have an account? <a href="login.html" id="toLogin">Login</a></p>
+        <p class="mt-3 text-white">Already have an account? <a href="login.html" id="toLogin" class="text-warning">Login</a></p>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script>
+        // Page Transition Animation
         document.getElementById('toLogin').addEventListener('click', function(event) {
             event.preventDefault();
             gsap.to("body", { opacity: 0, duration: 0.5, onComplete: function() {
                 window.location.href = 'login.html';
             }});
+        });
+
+        // Input Floating Effect
+        document.querySelectorAll('.form-group input').forEach(input => {
+            input.addEventListener('focus', function() {
+                gsap.to(this, { scale: 1.05, duration: 0.3 });
+            });
+            input.addEventListener('blur', function() {
+                gsap.to(this, { scale: 1, duration: 0.3 });
+            });
         });
     </script>
 
