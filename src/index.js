@@ -70,46 +70,64 @@ app.get("/journalist" ,(req,res) => {
 
 
 //register user
-app.post("/signup", async(req,res) => {
+//register user
+app.post("/signup", async(req, res) => {
     const data = {
         name: req.body.username,
+        email: req.body.email,
         password: req.body.password
     }
 
-//check if user already exist
-    const existingUser = await collection.findOne({name: data.name});
+    // Check if user already exists by username or email
+    const existingUser = await collection.findOne({ 
+        $or: [
+            { name: data.name },
+            { email: data.email }
+        ]
+    });
 
-    if(existingUser){
+    if(existingUser) {
         res.send("User Already Exists");
-    }else
-    {
-        //hash password by bcrypt 
+    } else {
+        // Hash password by bcrypt 
         const saltRounds = 10; // 10 is no of salt round
-        const hashedPassword = await bcrypt.hash(data.password,saltRounds);
+        const hashedPassword = await bcrypt.hash(data.password, saltRounds);
         data.password = hashedPassword; // replaces hash password (security)
 
         const userdata = await collection.insertMany(data);
         console.log(userdata);
+        res.redirect("/"); // Redirect to login
     }
-    
 });
+
+
+
 //Login user
 app.post("/login", async (req, res) => {
-    try{
-        const check = await collection.findOne({name: req.body.username});
-        if(!check){
-            res.send("User name not found");
+    try {
+        // Check if user exists by username or email
+        const loginField = req.body.login;
+        const check = await collection.findOne({
+            $or: [
+                { name: loginField },
+                { email: loginField }
+            ]
+        });
+        
+        if(!check) {
+            return res.send("User not found");
         }
 
-        //compare the hash password from database
+        // Compare the hash password from database
         const isPasswordMatch = await bcrypt.compare(req.body.password, check.password);
-        if(isPasswordMatch){
+        if(isPasswordMatch) {
             res.render("home");
-        }else{
-            req.send("Wrong Password");
+        } else {
+            res.send("Wrong Password"); // Fixed res.send (was req.send)
         }
 
-    }catch{
+    } catch(error) {
+        console.error(error);
         res.send("Wrong Details");
     }
 });
