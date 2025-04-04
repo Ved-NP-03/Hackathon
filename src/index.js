@@ -4,6 +4,9 @@ const path = require("path");
 const bcrypt = require("bcryptjs");
 const collection = require("./config");
 const { name } = require('ejs');
+const session = require('express-session');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 
 
@@ -11,6 +14,69 @@ const app = express();
 
 require('dotenv').config();
 const MONGODB_URI = process.env.MONGODB_URI;
+
+// Session configuration
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true
+}));
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Passport serialization
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+    try {
+        const user = await collection.findById(id);
+        done(null, user);
+    } catch (err) {
+        done(err, null);
+    }
+});
+
+// Google Strategy setup
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: "/auth/google/callback"
+}, async (accessToken, refreshToken, profile, done) => {
+    try {
+        // Check if user already exists
+        let user = await collection.findOne({ googleId: profile.id });
+        
+        if (user) {
+            return done(null, user);
+        }
+        
+        // Create a new user
+        const newUser = await collection.create({
+            name: profile.displayName,
+            email: profile.emails[0].value,
+            googleId: profile.id,
+            // Generate a random password for Google users
+            password: await bcrypt.hash(Math.random().toString(36).slice(-8), 10)
+        });
+        
+        return done(null, newUser);
+    } catch (err) {
+        return done(err, null);
+    }
+}));
+
+// Middleware to check if user is authenticated
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/');
+}
+
 
 
 //convert data into json form
@@ -28,9 +94,39 @@ app.get("/",(req,res) =>{
     res.render("login");
 });
 
+
 app.get("/signup",(req,res) =>{
     res.render("signup");
 });
+
+// Google Auth routes
+app.get("/auth/google", 
+    passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+app.get("/auth/google/callback", 
+    passport.authenticate("google", { 
+        failureRedirect: "/" 
+    }),
+    (req, res) => {
+        // Successful authentication, redirect home
+        res.redirect("/home");
+    }
+);
+
+// Protected route
+app.get("/home", isLoggedIn, (req, res) => {
+    res.render("home", { user: req.user });
+});
+
+// Logout route
+app.get("/logout", (req, res) => {
+    req.logout(function(err) {
+        if (err) { return next(err); }
+        res.redirect('/');
+    });
+});
+
 
 app.get("/contact" ,(req,res) => {
     res.render("contact");

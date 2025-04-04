@@ -36,6 +36,10 @@ const LoginSchema = new mongoose.Schema({
     password:{
         type:String,
         require:true
+    },
+    googleId: {
+        type: String,
+        required: false  // Only for Google OAuth users
     }
 });
 
