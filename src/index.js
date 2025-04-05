@@ -35,10 +35,11 @@ app.use(session({
       ttl: 14 * 24 * 60 * 60 // 14 days
     }),
     cookie: {
-      secure: process.env.NODE_ENV === 'production',
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000 // 1 day
-    }
+        secure: false, // 🚨 TEMP FIX FOR RENDER
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000
+      }
+      
   }));
 
 //use EJS as view engine
