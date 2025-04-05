@@ -6,6 +6,8 @@ const collection = require("./config");
 const { name } = require('ejs');
 const { generateOTP, sendVerificationEmail } = require("./emailService");
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
+
 
 
 
@@ -27,8 +29,16 @@ app.use(express.urlencoded({extended:false}));
 app.use(session({
     secret: process.env.SESSION_SECRET || 'your-secret-key',
     resave: false,
-    saveUninitialized: true,
-    cookie: { secure: process.env.NODE_ENV === 'production' }
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGODB_URI,
+      ttl: 14 * 24 * 60 * 60 // 14 days
+    }),
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000 // 1 day
+    }
   }));
 
 //use EJS as view engine

@@ -10,11 +10,6 @@ require('dotenv').config();
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASSWORD
     },
-    
-     tls: {
-    // Do not fail on invalid certs
-    rejectUnauthorized: false
-  }
   });
 
 
