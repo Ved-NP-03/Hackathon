@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <style>
         /* 🔥 Dark Background with Animation */
         body {
@@ -115,53 +114,6 @@
             box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4);
         }
 
-        /* Google Sign-In Button */
-        .btn-google {
-            width: 100%;
-            padding: 12px;
-            border-radius: 50px;
-            background: #ffffff;
-            color: #757575;
-            font-weight: bold;
-            font-size: 1rem;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease-in-out;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 15px;
-        }
-
-        .btn-google:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
-            background: #f5f5f5;
-        }
-
-        .btn-google i {
-            margin-right: 10px;
-            color: #4285F4;
-        }
-
-        /* Divider */
-        .divider {
-            display: flex;
-            align-items: center;
-            margin: 20px 0;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .divider::before, .divider::after {
-            content: "";
-            flex: 1;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .divider span {
-            padding: 0 10px;
-        }
-
         /* 🌍 Mobile-Friendly Design */
         @media (max-width: 400px) {
             .login-container {
@@ -187,17 +139,7 @@
             </div>
             <button type="submit" class="btn btn-login">Login</button>
         </form>
-        
-        <div class="divider">
-            <span>OR</span>
-        </div>
-        
-        <!-- Google Sign-In Button -->
-        <a href="/auth/google" class="btn btn-google">
-            <i class="fab fa-google"></i> Sign in with Google
-        </a>
-        
-        <p class="mt-3 text-white">Don't have an account? <a href="/signup" id="toSignup" class="text-info">Sign Up</a></p>
+        <p class="mt-3 text-white">Don't have an account? <a href="signup.html" id="toSignup" class="text-info">Sign Up</a></p>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -206,7 +148,7 @@
         document.getElementById('toSignup').addEventListener('click', function(event) {
             event.preventDefault();
             gsap.to("body", { opacity: 0, duration: 0.5, onComplete: function() {
-                window.location.href = '/signup';
+                window.location.href = 'signup.html';
             }});
         });
 

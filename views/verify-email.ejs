@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Email</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #000428);
+            background-size: 400% 400%;
+            animation: gradientBG 8s ease infinite;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .verify-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0px 5px 20px rgba(255, 255, 255, 0.2);
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            animation: fadeInUp 1s ease-out;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s;
+            outline: none;
+            text-align: center;
+            letter-spacing: 6px;
+            font-size: 1.5rem;
+        }
+
+        .btn-verify {
+            width: 100%;
+            padding: 12px;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #3a7bd5, #00d2ff);
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            margin-bottom: 1rem;
+        }
+
+        .btn-verify:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(58, 123, 213, 0.4);
+        }
+
+        .btn-resend {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            color: white;
+        }
+
+        .btn-resend:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .alert {
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="verify-container">
+        <h2 class="text-white mb-4">Verify Your Email</h2>
+        
+        <% if (locals.error) { %>
+            <div class="alert alert-danger" role="alert">
+                <%= error %>
+            </div>
+        <% } %>
+        
+        <% if (locals.message) { %>
+            <div class="alert alert-success" role="alert">
+                <%= message %>
+            </div>
+        <% } %>
+        
+        <p class="text-white mb-4">
+            We've sent a verification code to<br>
+            <strong><%= email %></strong>
+        </p>
+        
+        <form action="/verify-otp" method="post">
+            <div class="form-group">
+                <input type="text" name="otp" id="otp" maxlength="6" required placeholder="------">
+            </div>
+            <button type="submit" class="btn btn-verify">Verify</button>
+        </form>
+        
+        <form action="/resend-otp" method="post">
+            <button type="submit" class="btn btn-verify btn-resend">Resend Code</button>
+        </form>
+        
+        <p class="mt-4 text-white">
+            Didn't receive the code? Check your spam folder or request a new code.
+        </p>
+    </div>
+
+    <script>
+        // Auto-focus OTP input when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('otp').focus();
+        });
+    </script>
+</body>
+</html>

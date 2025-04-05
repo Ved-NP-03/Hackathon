@@ -4,9 +4,9 @@ const path = require("path");
 const bcrypt = require("bcryptjs");
 const collection = require("./config");
 const { name } = require('ejs');
+const { generateOTP, sendVerificationEmail } = require("./emailService");
 const session = require('express-session');
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
+
 
 
 
@@ -15,67 +15,6 @@ const app = express();
 require('dotenv').config();
 const MONGODB_URI = process.env.MONGODB_URI;
 
-// Session configuration
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true
-}));
-
-// Initialize Passport
-app.use(passport.initialize());
-app.use(passport.session());
-
-// Passport serialization
-passport.serializeUser((user, done) => {
-    done(null, user.id);
-});
-
-passport.deserializeUser(async (id, done) => {
-    try {
-        const user = await collection.findById(id);
-        done(null, user);
-    } catch (err) {
-        done(err, null);
-    }
-});
-
-// Google Strategy setup
-passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "/auth/google/callback"
-}, async (accessToken, refreshToken, profile, done) => {
-    try {
-        // Check if user already exists
-        let user = await collection.findOne({ googleId: profile.id });
-        
-        if (user) {
-            return done(null, user);
-        }
-        
-        // Create a new user
-        const newUser = await collection.create({
-            name: profile.displayName,
-            email: profile.emails[0].value,
-            googleId: profile.id,
-            // Generate a random password for Google users
-            password: await bcrypt.hash(Math.random().toString(36).slice(-8), 10)
-        });
-        
-        return done(null, newUser);
-    } catch (err) {
-        return done(err, null);
-    }
-}));
-
-// Middleware to check if user is authenticated
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    res.redirect('/');
-}
 
 
 
@@ -83,6 +22,14 @@ function isLoggedIn(req, res, next) {
 app.use(express.json());
 
 app.use(express.urlencoded({extended:false}));
+
+// Set up session middleware
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'your-secret-key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: process.env.NODE_ENV === 'production' }
+  }));
 
 //use EJS as view engine
 app.set('view engine', 'ejs');
@@ -94,39 +41,9 @@ app.get("/",(req,res) =>{
     res.render("login");
 });
 
-
 app.get("/signup",(req,res) =>{
     res.render("signup");
 });
-
-// Google Auth routes
-app.get("/auth/google", 
-    passport.authenticate("google", { scope: ["profile", "email"] })
-);
-
-app.get("/auth/google/callback", 
-    passport.authenticate("google", { 
-        failureRedirect: "/" 
-    }),
-    (req, res) => {
-        // Successful authentication, redirect home
-        res.redirect("/home");
-    }
-);
-
-// Protected route
-app.get("/home", isLoggedIn, (req, res) => {
-    res.render("home", { user: req.user });
-});
-
-// Logout route
-app.get("/logout", (req, res) => {
-    req.logout(function(err) {
-        if (err) { return next(err); }
-        res.redirect('/');
-    });
-});
-
 
 app.get("/contact" ,(req,res) => {
     res.render("contact");
@@ -165,40 +82,153 @@ app.get("/journalist" ,(req,res) => {
 
 
 
-//register user
+
 //register user
 app.post("/signup", async(req, res) => {
-    const data = {
-        name: req.body.username,
-        email: req.body.email,
-        password: req.body.password
-    }
+    try {
+        const data = {
+            name: req.body.username,
+            email: req.body.email,
+            password: req.body.password
+        };
 
-    // Check if user already exists by username or email
-    const existingUser = await collection.findOne({ 
-        $or: [
-            { name: data.name },
-            { email: data.email }
-        ]
-    });
+        // Check if user already exists by username or email
+        const existingUser = await collection.findOne({ 
+            $or: [
+                { name: data.name },
+                { email: data.email }
+            ]
+        });
 
-    if(existingUser) {
-        res.send("User Already Exists");
-    } else {
-        // Hash password by bcrypt 
-        const saltRounds = 10; // 10 is no of salt round
+        if(existingUser) {
+            return res.send("User Already Exists");
+        }
+        
+        // Hash password
+        const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(data.password, saltRounds);
-        data.password = hashedPassword; // replaces hash password (security)
-
-        const userdata = await collection.insertMany(data);
-        console.log(userdata);
-        res.redirect("/"); // Redirect to login
+        data.password = hashedPassword;
+        
+        // Generate OTP
+        const otp = generateOTP();
+        const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // OTP expires in 10 minutes
+        
+        // Create user with OTP
+        const newUser = await collection.create({
+            ...data,
+            otp,
+            otpExpires
+        });
+        
+        // Send verification email
+        const emailSent = await sendVerificationEmail(data.email, otp);
+        
+        if (emailSent) {
+            // Store email in session for verification page
+            req.session.userEmail = data.email;
+            res.redirect("/verify-email");
+        } else {
+            // If email fails, still create the user but inform them about the issue
+            res.send("Account created but verification email could not be sent. Please contact support.");
+        }
+    } catch (error) {
+        console.error("Error during signup:", error);
+        res.status(500).send("An error occurred during signup");
     }
 });
 
+// Email verification page
+app.get("/verify-email", (req, res) => {
+    if (!req.session.userEmail) {
+        return res.redirect("/signup");
+    }
+    res.render("verify-email", { email: req.session.userEmail });
+});
 
+// Verify OTP route
+app.post("/verify-otp", async (req, res) => {
+    try {
+        const { otp } = req.body;
+        const email = req.session.userEmail;
+        
+        if (!email) {
+            return res.redirect("/signup");
+        }
+        
+        // Find user by email and valid OTP
+        const user = await collection.findOne({
+            email,
+            otp,
+            otpExpires: { $gt: new Date() } // Check if OTP is not expired
+        });
+        
+        if (!user) {
+            return res.render("verify-email", { 
+                email, 
+                error: "Invalid or expired OTP. Please try again." 
+            });
+        }
+        
+        // Mark user as verified and clear OTP fields
+        user.isVerified = true;
+        user.otp = undefined;
+        user.otpExpires = undefined;
+        await user.save();
+        
+        // Clear session email
+        req.session.userEmail = undefined;
+        
+        res.redirect("/verification-success");
+    } catch (error) {
+        console.error("Error during OTP verification:", error);
+        res.status(500).send("An error occurred during verification");
+    }
+});
 
-//Login user
+// Resend OTP route
+app.post("/resend-otp", async (req, res) => {
+    try {
+        const email = req.session.userEmail;
+        
+        if (!email) {
+            return res.redirect("/signup");
+        }
+        
+        // Find user
+        const user = await collection.findOne({ email });
+        
+        if (!user) {
+            return res.redirect("/signup");
+        }
+        
+        // Generate new OTP
+        const otp = generateOTP();
+        const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+        
+        // Update user with new OTP
+        user.otp = otp;
+        user.otpExpires = otpExpires;
+        await user.save();
+        
+        // Send verification email
+        await sendVerificationEmail(email, otp);
+        
+        res.render("verify-email", { 
+            email, 
+            message: "A new OTP has been sent to your email" 
+        });
+    } catch (error) {
+        console.error("Error during OTP resend:", error);
+        res.status(500).send("An error occurred while resending OTP");
+    }
+});
+
+// Verification success page
+app.get("/verification-success", (req, res) => {
+    res.render("verification-success");
+});
+
+// Update login route to check for email verification
 app.post("/login", async (req, res) => {
     try {
         // Check if user exists by username or email
@@ -210,25 +240,43 @@ app.post("/login", async (req, res) => {
             ]
         });
         
-        if(!check) {
+        if (!check) {
             return res.send("User not found");
+        }
+
+        // Check if user is verified (skip for Google OAuth users)
+        if (!check.googleId && !check.isVerified) {
+            // Store email in session for verification page
+            req.session.userEmail = check.email;
+            return res.redirect("/verify-email");
         }
 
         // Compare the hash password from database
         const isPasswordMatch = await bcrypt.compare(req.body.password, check.password);
-        if(isPasswordMatch) {
+        if (isPasswordMatch) {
+            // Set user in session
+            req.session.user = {
+                id: check._id,
+                name: check.name,
+                email: check.email
+            };
             res.render("home");
         } else {
-            res.send("Wrong Password"); // Fixed res.send (was req.send)
+            res.send("Wrong Password");
         }
-
-    } catch(error) {
+    } catch (error) {
         console.error(error);
         res.send("Wrong Details");
     }
 });
 
+
+
+//Login user
+
+
 const port = 5000;
 app.listen(port,()=> {
     console.log(`Server running on port: ${port}`);
 })
+

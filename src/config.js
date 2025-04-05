@@ -37,9 +37,17 @@ const LoginSchema = new mongoose.Schema({
         type:String,
         require:true
     },
-    googleId: {
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+    otp: {
         type: String,
-        required: false  // Only for Google OAuth users
+        required: false
+    },
+    otpExpires: {
+        type: Date,
+        required: false
     }
 });
 
