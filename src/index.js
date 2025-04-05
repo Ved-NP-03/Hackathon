@@ -35,7 +35,8 @@ app.use(session({
       ttl: 14 * 24 * 60 * 60 // 14 days
     }),
     cookie: {
-        secure: false, // 🚨 TEMP FIX FOR RENDER
+        secure: process.env.RENDER ? false : process.env.NODE_ENV === 'production',
+        //secure: false, // 🚨 TEMP FIX FOR RENDER
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000
       }
