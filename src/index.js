@@ -117,6 +117,21 @@ app.post("/signup", async(req, res) => {
         });
 
         if(existingUser) {
+            if (!existingUser.isVerified) {
+                // If user exists but not verified, resend OTP
+                const otp = generateOTP();
+                const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+                
+                existingUser.otp = otp;
+                existingUser.otpExpires = otpExpires;
+                await existingUser.save();
+            
+                await sendVerificationEmail(existingUser.email, otp);
+            
+                req.session.userEmail = existingUser.email;
+                return res.redirect("/verify-email");
+              }
+             // If user is verified already
             return res.send("User Already Exists");
         }
         
