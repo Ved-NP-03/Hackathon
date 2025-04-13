@@ -132,7 +132,8 @@ app.post("/signup", async(req, res) => {
                 return res.redirect("/verify-email");
               }
              // If user is verified already
-            return res.send("User Already Exists");
+             return res.render("signup", { error: "User already exists" });
+
         }
         
         // Hash password
@@ -272,7 +273,8 @@ app.post("/login", async (req, res) => {
         });
         
         if (!check) {
-            return res.send("User not found");
+            return res.render("login", { error: "User not found" });
+
         }
 
         // Check if user is verified (skip for Google OAuth users)
@@ -293,7 +295,7 @@ app.post("/login", async (req, res) => {
             };
             res.render("home");
         } else {
-            res.send("Wrong Password");
+            res.render("login", { error: "Wrong Password" });
         }
     } catch (error) {
         console.error(error);

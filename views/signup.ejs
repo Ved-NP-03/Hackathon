@@ -121,6 +121,18 @@
                 padding: 2rem;
             }
         }
+        .error-message {
+  background-color: #ffe6e6;
+  color: #d8000c;
+  padding: 12px 20px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(255, 0, 0, 0.1);
+  border: 1px solid #f5c2c2;
+}
+
     </style>
 </head>
 <body>
@@ -141,6 +153,10 @@
                 <input type="password" name="password" id="password" required placeholder="Password">
                 <label for="password">Password</label>
             </div>
+            <% if (typeof error !== 'undefined') { %>
+                <div class="error-message"><%= error %></div>
+              <% } %>
+              
             <button type="submit" class="btn btn-signup">Sign Up</button>
         </form>
         <p class="mt-3 text-white">Already have an account? <a href="/views/login.ejs" id="toLogin" class="text-warning">Login</a></p>
